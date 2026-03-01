@@ -1,0 +1,6 @@
+- [] endpoint /
+- [x] Filtro por activos -> GET /api/servicios?activo=true
+- [x] Paginacion
+- [x] Softdelete
+- [x] Relaciones con reservas
+- [x] Validacion con [required]

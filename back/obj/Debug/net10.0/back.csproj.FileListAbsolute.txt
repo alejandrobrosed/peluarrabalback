@@ -1,0 +1,9 @@
+C:\Users\nuria\gitlab\peluqueria-alex\back\obj\Debug\net10.0\back.csproj.AssemblyReference.cache
+C:\Users\nuria\gitlab\peluqueria-alex\back\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\nuria\gitlab\peluqueria-alex\back\obj\Debug\net10.0\back.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nuria\gitlab\peluqueria-alex\back\obj\Debug\net10.0\back.AssemblyInfoInputs.cache
+C:\Users\nuria\gitlab\peluqueria-alex\back\obj\Debug\net10.0\back.AssemblyInfo.cs
+C:\Users\nuria\gitlab\peluqueria-alex\back\obj\Debug\net10.0\back.csproj.CoreCompileInputs.cache
+C:\Users\nuria\gitlab\peluqueria-alex\back\obj\Debug\net10.0\back.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\nuria\gitlab\peluqueria-alex\back\obj\Debug\net10.0\back.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\nuria\gitlab\peluqueria-alex\back\obj\Debug\net10.0\back.sourcelink.json

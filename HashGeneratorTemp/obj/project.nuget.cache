@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "4nge+tTfu08=",
+  "dgSpecHash": "dn64HwVC79w=",
   "success": true,
-  "projectFilePath": "C:\\Users\\USUARIO\\Downloads\\peluqueria-alex\\peluqueria-alex\\HashGeneratorTemp\\HashGeneratorTemp.csproj",
+  "projectFilePath": "C:\\Users\\USUARIO\\Desktop\\proyecto\\peluarrabalback\\HashGeneratorTemp\\HashGeneratorTemp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\USUARIO\\.nuget\\packages\\bcrypt.net-next\\4.1.0\\bcrypt.net-next.4.1.0.nupkg.sha512"
   ],

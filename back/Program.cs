@@ -33,9 +33,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<PeluqueriaDbContext>(options =>
     options.UseMySql(
-        "server=localhost;database=peluqueria;user=peluqueria;password=password;",
+        "server=db;database=peluqueria;user=peluqueria;password=password;",
         ServerVersion.AutoDetect(
-            "server=localhost;database=peluqueria;user=peluqueria;password=password;"
+            "server=db;database=peluqueria;user=peluqueria;password=password;"
         )
     )
 );

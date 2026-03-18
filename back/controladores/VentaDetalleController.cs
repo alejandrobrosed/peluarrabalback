@@ -1,9 +1,8 @@
 using back.modelos;
-using back.bbdd;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.EntityFrameworkCore;
-
+using back.servicios;
 
 namespace back.controladores
 {
@@ -11,32 +10,26 @@ namespace back.controladores
     [Route("api/[controller]")]
     public class VentaDetalleController: ControllerBase
     {
-        private readonly PeluqueriaDbContext _context;
+        private readonly VentaDetallesService _ventaDetallesService;
 
-        public VentaDetalleController(PeluqueriaDbContext context)
+        public VentaDetalleController(VentaDetallesService ventaDetallesService)
         {
-            _context = context;
+            _ventaDetallesService = ventaDetallesService;
         }
 
         // GET: /api/detalles
         [HttpGet]
         public IActionResult GetDetalles()
         {
-            var detalles = _context.VentaDetalles
-                .Include(r => r.Producto)
-                .Include(r => r.Venta)
-                .ToList();
-                return Ok(detalles);
+            var detalles = _ventaDetallesService.GetDetalles();
+            return Ok(detalles);
         }
 
         // GET: /api/detalles/3
         [HttpGet("{id}")]
         public IActionResult GetDetalles(int id)
         {
-            var detalles = _context.VentaDetalles
-                .Include(r => r.Producto)
-                .Include(r => r.Venta)
-                .FirstOrDefault(v => v.Id_Detalle == id);
+            var detalles = _ventaDetallesService.GetDetalleById(id);
 
             if(detalles == null)
             {
@@ -49,11 +42,7 @@ namespace back.controladores
         [HttpGet("/venta/{id}")]
         public IActionResult GetDetallesPorVenta(int id)
         {
-            var detalles = _context.VentaDetalles
-                .Where(v => v.Id_Venta == id)
-                .Include(v => v.Producto)
-                .ToList();
-
+            var detalles = _ventaDetallesService.GetDetallesPorVenta(id);
             return Ok(detalles);
         }
 
@@ -71,8 +60,7 @@ namespace back.controladores
                 return BadRequest("La cantidad debe ser mayor que cero");
             }
 
-            _context.VentaDetalles.Add(detalle);
-            _context.SaveChanges();
+            _ventaDetallesService.CrearDetalle(detalle);
             return CreatedAtAction(nameof(GetDetalles), new {id = detalle.Id_Detalle}, detalle);
         }
 
@@ -84,19 +72,17 @@ namespace back.controladores
             {
                 return BadRequest();
             }
-            var detalle = _context.VentaDetalles.Find(id);
-            if(detalle == null)
-            {
-                return NotFound();
-            }
-            if(detalle.Cantidad <= 0)
+
+            if(detalleActualizado.Cantidad <= 0)
             {
                 return BadRequest("La cantidad debe ser mayor que cero");
             }
-            detalle.Cantidad = detalleActualizado.Cantidad;
-            detalle.PrecioUnitario = detalleActualizado.PrecioUnitario;
 
-            _context.SaveChanges();
+            var actualizado = _ventaDetallesService.ActualizarDetalle(id, detalleActualizado);
+            if (!actualizado)
+            {
+                return NotFound();
+            }
             return NoContent();
         }
 
@@ -104,17 +90,12 @@ namespace back.controladores
         [HttpDelete("{id}")]
         public IActionResult EliminarDetalles(int id)
         {
-            var detalle = _context.VentaDetalles.Find(id);
-            if(detalle == null)
+            var eliminado = _ventaDetallesService.EliminarDetalle(id);
+            if (!eliminado)
             {
                 return NotFound();
             }
-            _context.VentaDetalles.Remove(detalle);
-
-            _context.SaveChanges();
             return NoContent();
         }
-
-
     }
 }

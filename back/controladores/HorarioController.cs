@@ -1,9 +1,8 @@
 using back.modelos;
-using back.bbdd;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.EntityFrameworkCore;
-
+using back.servicios;
 
 namespace back.controladores
 {
@@ -11,30 +10,26 @@ namespace back.controladores
     [Route("api/[controller]")]
     public class HorarioController: ControllerBase
     {
-        private readonly PeluqueriaDbContext _context;
+        private readonly HorariosService _horariosService;
 
-        public HorarioController(PeluqueriaDbContext context)
+        public HorarioController(HorariosService horariosService)
         {
-            _context = context;
+            _horariosService = horariosService;
         }
 
         // GET: /api/horarios
         [HttpGet]
         public IActionResult GetHorarios()
         {
-            var horarios = _context.Horarios
-                .Include(r => r.Empleado)
-                .ToList();
-                return Ok(horarios);
+            var horarios = _horariosService.GetHorarios();
+            return Ok(horarios);
         }
 
         // GET: /api/horarios/3
         [HttpGet("{id}")]
         public IActionResult GetHorarios(int id)
         {
-            var horarios = _context.Horarios
-                .Include(r => r.Empleado)
-                .FirstOrDefault(r => r.Id_Horario == id);
+            var horarios = _horariosService.GetHorarioById(id);
 
             if(horarios == null)
             {
@@ -42,15 +37,12 @@ namespace back.controladores
             }
             return Ok(horarios);
         }
-
 
         // GET: /api/horarios/empleado/2
         [HttpGet("empleado/{id}")]
         public IActionResult GetHorariosPorEmpleado(int id)
         {
-            var horarios = _context.Horarios
-                .Include(r => r.Empleado)
-                .FirstOrDefault(r => r.Id_Empleado == id);
+            var horarios = _horariosService.GetHorarioPorEmpleado(id);
 
             if(horarios == null)
             {
@@ -58,7 +50,6 @@ namespace back.controladores
             }
             return Ok(horarios);
         }
-
 
         //POST: /api/horario
         [HttpPost]
@@ -71,11 +62,10 @@ namespace back.controladores
             
             if(horario.Hora_Fin <= horario.Hora_Inicio)
             {
-                return BadRequest("La hora de fin debe ser mauor que la hora de inicio");
+                return BadRequest("La hora de fin debe ser mayor que la hora de inicio");
             }
 
-            _context.Horarios.Add(horario);
-            _context.SaveChanges();
+            _horariosService.CrearHorario(horario);
             return CreatedAtAction(nameof(GetHorarios), new {id = horario.Id_Horario}, horario);
         }
 
@@ -83,24 +73,16 @@ namespace back.controladores
         [HttpPut("{id}")]
         public IActionResult ActualizarHorario(int id, [FromBody] Horario horarioActualizado)
         {
-            var horario = _context.Horarios.Find(id);
-            if(horario == null)
+            if(horarioActualizado.Hora_Fin <= horarioActualizado.Hora_Inicio)
+            {
+                return BadRequest("La hora de fin debe ser mayor que la hora de inicio");
+            }
+
+            var actualizado = _horariosService.ActualizarHorario(id, horarioActualizado);
+            if (!actualizado)
             {
                 return NotFound();
             }
-
-            if(horario.Hora_Fin <= horario.Hora_Inicio)
-            {
-                return BadRequest("La hora de fin debe ser mauor que la hora de inicio");
-            }
-
-
-            horario.Dia_Semana = horarioActualizado.Dia_Semana;
-            horario.Hora_Inicio = horarioActualizado.Hora_Inicio;
-            horario.Hora_Fin = horarioActualizado.Hora_Fin;
-            horario.Id_Empleado = horarioActualizado.Id_Empleado;
-
-            _context.SaveChanges();
             return NoContent();
         }
 
@@ -108,17 +90,12 @@ namespace back.controladores
         [HttpDelete("{id}")]
         public IActionResult EliminarHorario(int id)
         {
-            var horario = _context.Horarios.Find(id);
-            if(horario == null)
+            var eliminado = _horariosService.EliminarHorario(id);
+            if (!eliminado)
             {
                 return NotFound();
             }
-            _context.Horarios.Remove(horario);
-
-            _context.SaveChanges();
             return NoContent();
         }
-
-
     }
 }

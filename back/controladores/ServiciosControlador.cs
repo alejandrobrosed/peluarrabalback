@@ -1,7 +1,6 @@
 using back.modelos;
-using back.bbdd;
 using Microsoft.AspNetCore.Mvc;
-
+using back.servicios;
 
 namespace back.controladores
 {
@@ -9,25 +8,18 @@ namespace back.controladores
     [Route("api/[controller]")]
     public class ServiciosController: ControllerBase
     {
-        private readonly PeluqueriaDbContext _context;
+        private readonly ServiciosService _serviciosService;
 
-        public ServiciosController(PeluqueriaDbContext context)
+        public ServiciosController(ServiciosService serviciosService)
         {
-            _context = context;
+            _serviciosService = serviciosService;
         }
 
         // GET: /api/servicios
         [HttpGet]
         public IActionResult GetServicios(bool?activo, int page=1, int pageSize=5)
         {
-            var query = _context.Servicios.Where(s => s.Activo == true).AsQueryable();
-            if (activo.HasValue)
-            {
-                query = query.Where(s => s.Activo == activo.Value);
-            }
-
-            var total = query.Count();
-            var servicios = query.Skip((page-1) * pageSize).Take(pageSize).ToList();
+            var (total, servicios) = _serviciosService.GetServicios(activo, page, pageSize);
             return Ok(new
             {
                 Total = total,
@@ -41,21 +33,15 @@ namespace back.controladores
         [HttpGet("activos")]
         public IActionResult GetServiciosActivos([FromBody] bool? activo)
         {
-            var query = _context.Servicios.AsQueryable();
-            if (activo.HasValue)
-            {
-                query = query.Where(s => s.Activo == activo.Value);
-            }
-            var servicios = query.ToList();
+            var servicios = _serviciosService.GetServiciosActivos(activo);
             return Ok(servicios);
         }
-
 
         // GET: /api/servicios/3
         [HttpGet("{id}")]
         public IActionResult GetServicio(int id)
         {
-            var servicio = _context.Servicios.Find(id);
+            var servicio = _serviciosService.GetServicioById(id);
             if(servicio == null)
             {
                 return NotFound();
@@ -71,8 +57,8 @@ namespace back.controladores
             {
                 return BadRequest(ModelState);
             }
-            _context.Servicios.Add(servicio);
-            _context.SaveChanges();
+
+            _serviciosService.CrearServicio(servicio);
             return Ok(servicio);
         }
 
@@ -80,18 +66,11 @@ namespace back.controladores
         [HttpPut("{id}")]
         public IActionResult ActualizarServicio(int id, [FromBody] Servicio servicioActualizado)
         {
-            var servicio = _context.Servicios.Find(id);
-            if(servicio == null)
+            var actualizado = _serviciosService.ActualizarServicio(id, servicioActualizado);
+            if (!actualizado)
             {
                 return NotFound();
             }
-            servicio.Nombre = servicioActualizado.Nombre;
-            servicio.Duracion_Minutos = servicioActualizado.Duracion_Minutos;
-            servicio.Descripcion = servicioActualizado.Descripcion;
-            servicio.Precio = servicioActualizado.Precio;
-            servicio.Activo = servicioActualizado.Activo;
-
-            _context.SaveChanges();
             return NoContent();
         }
 
@@ -99,14 +78,11 @@ namespace back.controladores
         [HttpDelete("{id}")]
         public IActionResult EliminarServicio(int id)
         {
-            var servicio = _context.Servicios.Find(id);
-            if(servicio == null)
+            var eliminado = _serviciosService.EliminarServicio(id);
+            if (!eliminado)
             {
                 return NotFound();
             }
-            _context.Servicios.Remove(servicio);
-
-            _context.SaveChanges();
             return NoContent();
         }
 
@@ -114,17 +90,12 @@ namespace back.controladores
         [HttpDelete("{id}/inactivo")]
         public IActionResult MarcarInactivoServicio(int id)
         {
-            var servicio = _context.Servicios.Find(id);
-            if(servicio == null)
+            var marcado = _serviciosService.MarcarInactivoServicio(id);
+            if (!marcado)
             {
                 return NotFound();
             }
-            servicio.Activo = false;
-
-            _context.SaveChanges();
             return NoContent();
         }
-
-
     }
 }

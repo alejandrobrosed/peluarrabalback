@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace back.modelos
 
 {
@@ -14,6 +15,8 @@ namespace back.modelos
         public String? Telefono { get; set; }
         [Required]
         public String Password { get; set;}
+        [Column("avatar_url")]
+        public String? Avatar_Url { get; set; }
         public String? Rol { get; set; }
         public bool? Activo { get; set; }
     }    

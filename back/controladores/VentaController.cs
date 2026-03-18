@@ -1,9 +1,8 @@
 using back.modelos;
-using back.bbdd;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.EntityFrameworkCore;
-
+using back.servicios;
 
 namespace back.controladores
 {
@@ -11,30 +10,26 @@ namespace back.controladores
     [Route("api/[controller]")]
     public class VentaController: ControllerBase
     {
-        private readonly PeluqueriaDbContext _context;
+        private readonly VentasService _ventasService;
 
-        public VentaController(PeluqueriaDbContext context)
+        public VentaController(VentasService ventasService)
         {
-            _context = context;
+            _ventasService = ventasService;
         }
 
         // GET: /api/ventas
         [HttpGet]
         public IActionResult GetVentas()
         {
-            var ventas = _context.Ventas
-                .Include(r => r.Cliente)
-                .ToList();
-                return Ok(ventas);
+            var ventas = _ventasService.GetVentas();
+            return Ok(ventas);
         }
 
         // GET: /api/ventas/3
         [HttpGet("{id}")]
         public IActionResult GetVentas(int id)
         {
-            var ventas = _context.Ventas
-                .Include(v => v.Cliente)
-                .FirstOrDefault(v => v.Id_Cliente == id);
+            var ventas = _ventasService.GetVentaById(id);
 
             if(ventas == null)
             {
@@ -47,10 +42,7 @@ namespace back.controladores
         [HttpGet("/cliente/{id}")]
         public IActionResult GetVentasPorCliente(int id)
         {
-            var ventas = _context.Ventas
-                .Where(v => v.Id_Cliente == id)
-                .ToList();
-
+            var ventas = _ventasService.GetVentasPorCliente(id);
             return Ok(ventas);
         }
 
@@ -63,10 +55,7 @@ namespace back.controladores
                 return BadRequest(ModelState);
             }
 
-            venta.Fecha = DateTime.Now;
-
-            _context.Ventas.Add(venta);
-            _context.SaveChanges();
+            _ventasService.CrearVenta(venta);
             return CreatedAtAction(nameof(GetVentas), new {id = venta.Id_Venta}, venta);
         }
 
@@ -74,14 +63,11 @@ namespace back.controladores
         [HttpPut("{id}")]
         public IActionResult ActualizarVenta(int id, [FromBody] Venta ventaActualizado)
         {
-            var venta = _context.Ventas.Find(id);
-            if(venta == null)
+            var actualizado = _ventasService.ActualizarVenta(id, ventaActualizado);
+            if (!actualizado)
             {
                 return NotFound();
             }
-            venta.Total = ventaActualizado.Total;
-
-            _context.SaveChanges();
             return NoContent();
         }
 
@@ -89,17 +75,12 @@ namespace back.controladores
         [HttpDelete("{id}")]
         public IActionResult EliminarVenta(int id)
         {
-            var venta = _context.Ventas.Find(id);
-            if(venta == null)
+            var eliminado = _ventasService.EliminarVenta(id);
+            if (!eliminado)
             {
                 return NotFound();
             }
-            _context.Ventas.Remove(venta);
-
-            _context.SaveChanges();
             return NoContent();
         }
-
-
     }
 }

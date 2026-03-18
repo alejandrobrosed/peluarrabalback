@@ -2,6 +2,7 @@ using back.bbdd;
 using back.dto;
 using BCrypt.Net;
 using Microsoft.AspNetCore.Mvc;
+using back.servicios;
 
 namespace back.controladores
 {
@@ -9,26 +10,25 @@ namespace back.controladores
     [Route("api/[controller]")]
     public class AuthController: ControllerBase
     {
-        private readonly PeluqueriaDbContext _context;
+        private readonly AuthService _authService;
 
-        public AuthController(PeluqueriaDbContext context)
+        public AuthController(AuthService authService)
         {
-            _context = context;
+            _authService = authService;
         }
 
         //POST: /api/usuario/login
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            var usuario = _context.Usuarios
-                .FirstOrDefault( u=> u.Email == request.Email && u.Activo == true);
+            var usuario = _authService.GetUsuarioActivoPorEmail(request.Email);
             
             if(usuario == null)
             {
                 return Unauthorized("Usuario no encontrado");
             }
 
-            if(!BCrypt.Net.BCrypt.Verify(request.Password, usuario.Password))
+            if(!_authService.VerificarPassword(request.Password, usuario.Password))
             {
                 return Unauthorized("La contraseña no es correcta");
             }
@@ -38,6 +38,7 @@ namespace back.controladores
                 id = usuario.Id_Usuario,
                 nombre= usuario.Nombre,
                 email = usuario.Email,
+                avatarUrl = usuario.Avatar_Url,
                 rol = usuario.Rol
             });
         }

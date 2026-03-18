@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.EntityFrameworkCore;
 using back.dto;
-
+using back.servicios;
+using Microsoft.Extensions.Logging;
 
 namespace back.controladores
 {
@@ -13,10 +14,14 @@ namespace back.controladores
     public class UsuarioController: ControllerBase
     {
         private readonly PeluqueriaDbContext _context;
+        private readonly UsuariosService _usuariosService;
+        private readonly ILogger<UsuarioController> _logger;
 
-        public UsuarioController(PeluqueriaDbContext context)
+        public UsuarioController(PeluqueriaDbContext context, UsuariosService usuariosService, ILogger<UsuarioController> logger)
         {
             _context = context;
+            _usuariosService = usuariosService;
+            _logger = logger;
         }
 
         // GET: /api/usuarios
@@ -38,6 +43,7 @@ namespace back.controladores
                     u.Apellidos,
                     u.Email,
                     u.Telefono,
+                    u.Avatar_Url,
                     u.Rol,
                     u.Activo
                 })
@@ -69,6 +75,7 @@ namespace back.controladores
                     u.Apellidos,
                     u.Email,
                     u.Telefono,
+                    u.Avatar_Url,
                     u.Rol,
                     u.Activo
                 })
@@ -149,8 +156,27 @@ namespace back.controladores
             return NoContent();
         }
 
-        
+        //POST: /api/usuario/5/avatar
+        [HttpPost("{id}/avatar")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> SubirAvatar(int id, IFormFile file)
+        {
+            try
+            {
+                var url = await _usuariosService.SubirAvatarAsync(id, file);
+                if (url == null)
+                {
+                    return NotFound();
+                }
 
+                return Ok(new { avatarUrl = url });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error subiendo avatar a Cloudinary para el usuario {UserId}", id);
+                return BadRequest(ex.Message);
+            }
+        }
 
     }
 }

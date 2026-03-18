@@ -1,9 +1,8 @@
 using back.modelos;
-using back.bbdd;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.EntityFrameworkCore;
-
+using back.servicios;
 
 namespace back.controladores
 {
@@ -11,30 +10,26 @@ namespace back.controladores
     [Route("api/[controller]")]
     public class EmpleadoController: ControllerBase
     {
-        private readonly PeluqueriaDbContext _context;
+        private readonly EmpleadosService _empleadosService;
 
-        public EmpleadoController(PeluqueriaDbContext context)
+        public EmpleadoController(EmpleadosService empleadosService)
         {
-            _context = context;
+            _empleadosService = empleadosService;
         }
 
         // GET: /api/empleados
         [HttpGet]
         public IActionResult GetEmpleados()
         {
-            var empleados = _context.Empleados
-                .Include(e => e.Usuario)
-                .ToList();
-                return Ok(empleados);
+            var empleados = _empleadosService.GetEmpleados();
+            return Ok(empleados);
         }
 
         // GET: /api/empleados/3
         [HttpGet("{id}")]
         public IActionResult GetReserva(int id)
         {
-            var empleado = _context.Empleados
-                .Include(e => e.Usuario)
-                .FirstOrDefault(e => e.Id_Empleado == id);
+            var empleado = _empleadosService.GetEmpleadoById(id);
 
             if(empleado == null)
             {
@@ -52,8 +47,7 @@ namespace back.controladores
                 return BadRequest(ModelState);
             }
 
-            _context.Empleados.Add(empleado);
-            _context.SaveChanges();
+            _empleadosService.CrearEmpleado(empleado);
             return CreatedAtAction(nameof(GetReserva), new {id = empleado.Id_Empleado}, empleado);
         }
 
@@ -61,17 +55,12 @@ namespace back.controladores
         [HttpDelete("{id}")]
         public IActionResult EliminarEmpleado(int id)
         {
-            var empleado = _context.Empleados.Find(id);
-            if(empleado == null)
+            var eliminado = _empleadosService.EliminarEmpleado(id);
+            if (!eliminado)
             {
                 return NotFound();
             }
-            _context.Empleados.Remove(empleado);
-
-            _context.SaveChanges();
             return NoContent();
         }
-
-
     }
 }

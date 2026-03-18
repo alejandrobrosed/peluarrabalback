@@ -409,3 +409,5 @@ C:\Users\USUARIO\Desktop\proyecto\peluarrabalback\back\obj\Debug\net8.0\refint\b
 C:\Users\USUARIO\Desktop\proyecto\peluarrabalback\back\obj\Debug\net8.0\back.pdb
 C:\Users\USUARIO\Desktop\proyecto\peluarrabalback\back\obj\Debug\net8.0\back.genruntimeconfig.cache
 C:\Users\USUARIO\Desktop\proyecto\peluarrabalback\back\obj\Debug\net8.0\ref\back.dll
+C:\Users\USUARIO\Desktop\proyecto\peluarrabalback\back\bin\Debug\net8.0\CloudinaryDotNet.dll
+C:\Users\USUARIO\Desktop\proyecto\peluarrabalback\back\bin\Debug\net8.0\Newtonsoft.Json.dll

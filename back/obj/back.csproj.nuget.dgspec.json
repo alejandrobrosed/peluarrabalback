@@ -47,6 +47,10 @@
               "target": "Package",
               "version": "[4.1.0, )"
             },
+            "CloudinaryDotNet": {
+              "target": "Package",
+              "version": "[1.28.0, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[9.0.0, )"
@@ -56,6 +60,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[9.0.0, )"
+            },
+            "Microsoft.OpenApi": {
+              "target": "Package",
+              "version": "[2.4.1, )"
             },
             "Pomelo.EntityFrameworkCore.MySql": {
               "target": "Package",

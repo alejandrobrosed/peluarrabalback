@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using back.bbdd;
+using back.servicios;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,23 +20,28 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.OperationFilter<FileUploadOperationFilter>();
+});
+
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<CloudinaryService>();
+builder.Services.AddScoped<UsuariosService>();
+builder.Services.AddScoped<ReservasService>();
+builder.Services.AddScoped<EmpleadosService>();
+builder.Services.AddScoped<HorariosService>();
+builder.Services.AddScoped<ServiciosService>();
+builder.Services.AddScoped<VentasService>();
+builder.Services.AddScoped<VentaDetallesService>();
+builder.Services.AddScoped<AuthService>();
 
 //dbcontext
-// builder.Services.AddDbContext<PeluqueriaDbContext>(options =>
-//     options.UseMySql(
-//         builder.Configuration.GetConnectionString("DefaultConnection"),
-//         ServerVersion.AutoDetect(
-//             builder.Configuration.GetConnectionString("DefaultConnection")
-//         )
-//     )
-// );
-
 builder.Services.AddDbContext<PeluqueriaDbContext>(options =>
     options.UseMySql(
-        "server=db;database=peluqueria;user=peluqueria;password=password;",
+        builder.Configuration.GetConnectionString("DefaultConnection"),
         ServerVersion.AutoDetect(
-            "server=db;database=peluqueria;user=peluqueria;password=password;"
+            builder.Configuration.GetConnectionString("DefaultConnection")
         )
     )
 );

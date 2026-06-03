@@ -40,7 +40,7 @@ namespace back.controladores
 
         //POST: /api/empleado
         [HttpPost]
-        public IActionResult CrearEmpleado([FromBody] Empleado empleado)
+        public IActionResult CrearEmpleado([FromBody] Empleado empleado)    
         {
             if (!ModelState.IsValid)
             {

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "HKnOTmc+yyU=",
+  "dgSpecHash": "MVQERtQET4w=",
   "success": true,
-  "projectFilePath": "C:\\Users\\USUARIO\\Desktop\\proyecto\\peluarrabalback\\back\\back.csproj",
+  "projectFilePath": "C:\\Users\\USUARIO\\Desktop\\peluarrabalback\\back\\back.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\USUARIO\\.nuget\\packages\\bcrypt.net-next\\4.1.0\\bcrypt.net-next.4.1.0.nupkg.sha512",
     "C:\\Users\\USUARIO\\.nuget\\packages\\cloudinarydotnet\\1.28.0\\cloudinarydotnet.1.28.0.nupkg.sha512",

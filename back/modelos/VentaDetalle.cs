@@ -17,6 +17,7 @@ namespace back.modelos
         [Required]
         public int Cantidad { get; set; }
         [Required]
+        [Column("precio_unitario")]
         public decimal PrecioUnitario { get; set;}
     }
 }

@@ -66,11 +66,11 @@ dotnet build
 ## Acceder a la aplicación vía navegador web
 
 ~~~sh
-http://localhost:5067/
+http://localhost:4977/
 ~~~
 
 ## Acceder al swagger vía navegador web (API)
 
 ~~~sh
-http://localhost:5067/swagger
+http://localhost:4977/swagger
 ~~~
